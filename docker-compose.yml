@@ -1,0 +1,92 @@
+version: "3"
+
+services:
+  automuteus:
+    # Either:
+    # - Use a prebuilt image
+    image: automuteus/automuteus:${AUTOMUTEUS_TAG:?err}
+    # - Build image from local source (replace with path to source)
+    #build: /path/to/automuteus/automuteus
+    # - Build image from github directly
+    #build: http://github.com/automuteus/automuteus.git
+
+    restart: always
+    environment:
+      - HOST=${GALACTUS_HOST:?err}
+      - POSTGRES_USER=${POSTGRES_USER:?err}
+      - POSTGRES_PASS=${POSTGRES_PASS:?err}
+
+      # These Variables are optional
+      - EMOJI_GUILD_ID=${EMOJI_GUILD_ID:-}
+      - CAPTURE_TIMEOUT=${CAPTURE_TIMEOUT:-}
+      - AUTOMUTEUS_LISTENING=${AUTOMUTEUS_LISTENING:-}
+
+      # Do **NOT** change this
+      - REDIS_ADDR=${AUTOMUTEUS_REDIS_ADDR}
+      - GALACTUS_ADDR=${GALACTUS_ADDR}
+      - POSTGRES_ADDR=${POSTGRES_ADDR}
+    depends_on:
+      - redis
+      - galactus
+      - postgres
+    volumes:
+      - "bot-logs:/app/logs"
+
+  galactus:
+    image: automuteus/galactus:${GALACTUS_TAG:?err}
+    # - Build image from local source (replace with path to source)
+    #build: /path/to/automuteus/galactus
+    # - Build image from github directly
+    #build: http://github.com/automuteus/galactus.git
+
+    ports:
+      # Only uncomment if you plan on developing other integrations, and want galactus exposed outside the docker network!
+      #- ${GALACTUS_PORT:-5858}:${GALACTUS_PORT:-5858}
+    restart: always
+    environment:
+      # Required
+      - DISCORD_BOT_TOKEN=${DISCORD_BOT_TOKEN:?err}
+      - WORKER_BOT_TOKENS=${WORKER_BOT_TOKENS:-}
+      # Do **NOT** change these
+      - REDIS_ADDR=${GALACTUS_REDIS_ADDR}
+      - GALACTUS_PORT=${GALACTUS_PORT:-5858}
+    depends_on:
+      - redis
+
+  wingman:
+    image: automuteus/wingman:{WINGMAN_TAG:?err}
+    # - Build image from local source (replace with path to source)
+    #build: /path/to/automuteus/wingman
+    # - Build image from github directly
+    #build: http://github.com/automuteus/wingman.git
+
+    # wingman is the only service that needs to be explicitly accessible outside the network (capture clients)
+    ports:
+      - ${WINGMAN_PORT:-8123}:${WINGMAN_PORT:-8123}
+    restart: always
+    environment:
+      - WINGMAN_PORT=${WINGMAN_PORT:-8123}
+      - GALACTUS_ADDR=${GALACTUS_ADDR}
+    depends_on:
+      - galactus
+
+
+  redis:
+    image: redis:alpine
+    restart: always
+    volumes:
+      - "redis-data:/data"
+
+  postgres:
+    image: postgres:12-alpine
+    restart: always
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASS}
+    volumes:
+      - "postgres-data:/var/lib/postgresql/data"
+
+volumes:
+  bot-logs:
+  redis-data:
+  postgres-data:
