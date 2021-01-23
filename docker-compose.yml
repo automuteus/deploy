@@ -54,7 +54,7 @@ services:
       - redis
 
   wingman:
-    image: automuteus/wingman:{WINGMAN_TAG:?err}
+    image: automuteus/wingman:${WINGMAN_TAG:?err}
     # - Build image from local source (replace with path to source)
     #build: /path/to/automuteus/wingman
     # - Build image from github directly
