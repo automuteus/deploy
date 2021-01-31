@@ -12,7 +12,7 @@ services:
 
     restart: always
     environment:
-      - HOST=${GALACTUS_HOST:?err}
+      - HOST=${WINGMAN_HOST:?err}
       - POSTGRES_USER=${POSTGRES_USER:?err}
       - POSTGRES_PASS=${POSTGRES_PASS:?err}
 
