@@ -39,9 +39,9 @@ services:
     # - Build image from github directly
     #build: http://github.com/automuteus/galactus.git
 
-    ports:
-      # Only uncomment if you plan on developing other integrations, and want galactus exposed outside the docker network!
-      #- ${GALACTUS_PORT:-5858}:${GALACTUS_PORT:-5858}
+    # Only uncomment if you plan on developing other integrations, and want galactus exposed outside the docker network!
+    #ports:
+    #  - ${GALACTUS_PORT:-5858}:${GALACTUS_PORT:-5858}
     restart: always
     environment:
       # Required
