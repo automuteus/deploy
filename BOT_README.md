@@ -25,13 +25,13 @@
 | ⬜ Kick Members          | ⬜ Mention Everyone     | ⬜ Use Voice Activity |
 | ⬜ Ban Members           | ✅ Use External Emojis  | ⬜ Priority Speaker   |
 | ⬜ Create Instant Invite | ✅ Add Reactions        |                      |
-| ⬜ Change Nickname       |                        |                      |
+| ⬜ Change Nickname       | ⬜ Use Slash Commands   |                      |
 | ⬜ Manage Nicknames      |                        |                      |
-| ⬜ Manage Emojis         |                        |                      |
+| ✅ Manage Emojis         |                        |                      |
 | ⬜ Manage Webhooks       |                        |                      |
 | ✅ View Channels         |                        |                      |
 
-Permissions Integer: `12938304`
+Permissions Integer: `1086680128`
 
 ### For the extra worker bot
 
