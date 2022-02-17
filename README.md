@@ -1,5 +1,6 @@
-# deploy
-Instructions and Resources for Deploying and Developing AutoMuteUs
+# Instructions and Resources for Deploying and Developing AutoMuteUs
+
+If you would prefer to self-host the bot, the steps for doing so are provided below. Self-hosting requires robust knowledge and troubleshooting capability for Docker/Docker-compose and/or any other networking and routing config specific to your hosting solution.
 
 ## Pre-Installation Steps, Important!
 
@@ -34,7 +35,7 @@ Heroku hosting steps are are not yet updated for v3.0+ of AutoMuteUs, and as suc
 AutoMuteUs exists in the FreeBSD Ports tree as [`games/automuteus`](https://www.freshports.org/games/automuteus/). Instructions are included in the Port.
 
 ## Old version
-If, for whatever reason, you _really_ want to self host, but also don't want to figure out Docker or use Windows and hate Docker because of it (I don't blame you) you can self host [2.4.3](https://github.com/denverquane/automuteus/releases/tag/2.4.3) instead. **If you are using this method, continue using the newest capture!**
+If, for whatever reason, you _really_ want to self host, but also don't want to figure out Docker or use Windows and hate Docker because of it (I don't blame you) you can self host [2.4.3](https://github.com/denverquane/automuteus/releases/tag/2.4.3) instead. **If you are using this method, continue using the newest capture!** But note that 2.4.3 does not support 15 players' lobby and new player colors!
 
 ## Development Instructions
 The easiest way to test changes is to use docker-compose, but instead of using a pre-built image, building the automuteus docker image from source. Thankfully, this is easy to do:
@@ -50,24 +51,32 @@ Just remember that you will need to do a rebuild of the docker images every time
 
 ### Required
 
-- `GALACTUS_ADDR`: Address at which Galactus is accessible. Typically something like `http://localhost:5858` (or see docker-compose.yml)
+- `DISCORD_BOT_TOKEN`: The Bot Token used by the bot to authenticate with Discord.
 - `REDIS_ADDR`: The host and port at which your Redis database instance is accessible. Ex: `192.168.1.42:6379`
 - `POSTGRES_ADDR`: Address (host:port) at which Postgres is accessible. Used by automuteus to store game statistics. 
 - `POSTGRES_USER`: Username for authentication with Postgres.
 - `POSTGRES_PASS`: Password for authentication with Postgres.
+- `GALACTUS_ADDR`: Address at which Galactus is accessible. Typically something like `http://localhost:5858` (or see docker-compose.yml)
 
 ### Optional
 
+- `WORKER_BOT_TOKENS`: A comma-separated list of extra tokens to be used for mute/deafen. (Sent to Galactus, and stored in Redis after first start-up)
 - `EMOJI_GUILD_ID`: If your bot is a member of multiple guilds, this ID can be used to specify the single guild that it should use for emojis (no need to add the emojis to ALL servers).
 - `HOST`: The **externally-accessible URL** for Galactus. For example, `http://test.com:8123`.
   This is used to provide the linking URI to the capture, via the Direct Message the bot sends you when typing `.au new`.
   **You must specify `http://` or `https://` accordingly, and specify the port if non-8123. For example, `https://your-app.herokuapp.com:443`**
-- `LOCALE_PATH`: Path to localization files. Defaults to ./locales
+- `LOCALE_PATH`: Path to localization files.
 - `LOG_PATH`: Filesystem path for log files. Defaults to `./`
 - `CAPTURE_TIMEOUT`: How many seconds of no capture events received before the Bot will terminate the associated game/connection. Defaults to 36000 seconds.
 - `REDIS_PASS`: Your Redis database password, if necessary.
 - `AUTOMUTEUS_LISTENING`: What the bot displays it is "Listening to" in the online presence message. Recommend putting your custom command prefix here
 - `AUTOMUTEUS_GLOBAL_PREFIX`: A universal default for the bot's command prefix. The bot will respond to **both** this prefix, and any guild-specific prefixes set in settings.
+- `BASE_MAP_URL`: The URL used as the base for the map images used in lobby message and response to `.au map`. The actual URLs will be constructed as the concatenation of the following strings: `BASE_MAP_URL`, map name (`the_skeld`, `mira_hq`, `polus`, or `airship`), version (`_detailed` for detailed version only), extension and query string (`.png?raw=true`)
+
+### HIGHLY advanced. Probably don't ever touch these!
+
+- `NUM_SHARDS`: Num shards provided to the Discord API.
+- `SHARD_ID`: Shard ID used to identify with the Discord API. Needs to be strictly less than `NUM_SHARDS`
 
 ## Galactus
 
