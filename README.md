@@ -40,10 +40,11 @@ If, for whatever reason, you _really_ want to self host, but also don't want to 
 ## Development Instructions
 The easiest way to test changes is to use docker-compose, but instead of using a pre-built image, building the automuteus docker image from source. Thankfully, this is easy to do:
 
-1. In the `docker-compose.yml` comment out the line `image: denverquane/amongusdiscord:${AUTOMUTEUS_TAG:?err}` and uncomment the `build .` line.
+1. Clone [automuteus/automuteus](https://github.com/automuteus/automuteus) next to this `deploy` repository.
 2. Make any changes to the code or sql file that you would like.
-3. Use the command `docker-compose build` to build the set of docker images with your change
-4. Start the stack with `docker-compose up`
+3. In the `docker-compose.yml` comment out the line `image: automuteus/automuteus:${AUTOMUTEUS_TAG:?err}` and uncomment the `build: ../automuteus` line (and modify path if required).
+4. Use the command `docker-compose build` to build the set of docker images with your change
+5. Start the stack with `docker-compose up`
 
 Just remember that you will need to do a rebuild of the docker images every time you make a change.
 
