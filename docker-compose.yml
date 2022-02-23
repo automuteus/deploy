@@ -31,11 +31,13 @@ services:
       - AUTOMUTEUS_LISTENING=${AUTOMUTEUS_LISTENING:-}
       - AUTOMUTEUS_GLOBAL_PREFIX=${AUTOMUTEUS_GLOBAL_PREFIX:-}
       - BASE_MAP_URL=${BASE_MAP_URL:-}
+      - SLASH_COMMAND_GUILD_IDS=${SLASH_COMMAND_GUILD_IDS:-}
 
       # Do **NOT** change this
       - REDIS_ADDR=${AUTOMUTEUS_REDIS_ADDR}
       - GALACTUS_ADDR=${GALACTUS_ADDR}
       - POSTGRES_ADDR=${POSTGRES_ADDR}
+    stop_grace_period: ${STOP_GRACE_PERIOD:-1m}
     depends_on:
       - redis
       - galactus
