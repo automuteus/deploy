@@ -25,7 +25,6 @@ services:
       - POSTGRES_PASS=${POSTGRES_PASS:?err}
 
       # These Variables are optional
-      - WORKER_BOT_TOKENS=${WORKER_BOT_TOKENS:-}
       - EMOJI_GUILD_ID=${EMOJI_GUILD_ID:-}
       - CAPTURE_TIMEOUT=${CAPTURE_TIMEOUT:-}
       - AUTOMUTEUS_LISTENING=${AUTOMUTEUS_LISTENING:-}
@@ -37,7 +36,7 @@ services:
       - REDIS_ADDR=${AUTOMUTEUS_REDIS_ADDR}
       - GALACTUS_ADDR=${GALACTUS_ADDR}
       - POSTGRES_ADDR=${POSTGRES_ADDR}
-    stop_grace_period: ${STOP_GRACE_PERIOD:-1m}
+    stop_grace_period: ${STOP_GRACE_PERIOD:-2m}
     depends_on:
       - redis
       - galactus
@@ -51,6 +50,9 @@ services:
     image: automuteus/galactus:${GALACTUS_TAG:?err}
     restart: always
     environment:
+      # This Variable is optional
+      - WORKER_BOT_TOKENS=${WORKER_BOT_TOKENS:-}
+
       # Do **NOT** change these
       - DISCORD_BOT_TOKEN=${DISCORD_BOT_TOKEN:?err}
       - BROKER_PORT=${BROKER_PORT}
