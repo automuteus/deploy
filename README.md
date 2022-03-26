@@ -43,7 +43,12 @@ The easiest way to test changes is to use docker-compose, but instead of using a
 1. Clone [automuteus/automuteus](https://github.com/automuteus/automuteus) next to this `deploy` repository.
 2. Make any changes to the code or sql file that you would like.
 3. In the `docker-compose.yml` comment out the line `image: automuteus/automuteus:${AUTOMUTEUS_TAG:?err}` and uncomment the `build: ../automuteus` line (and modify path if required).
-4. Use the command `docker-compose build` to build the set of docker images with your change
+4. Use the following command to build the set of docker images with your change
+
+   ```bash
+   COMPOSE_DOCKER_CLI_BUILD=1 DOCKER_BUILDKIT=1 docker-compose build
+   ```
+
 5. Start the stack with `docker-compose up`
 
 Just remember that you will need to do a rebuild of the docker images every time you make a change.
