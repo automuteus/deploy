@@ -43,7 +43,12 @@ The easiest way to test changes is to use docker-compose, but instead of using a
 1. Clone [automuteus/automuteus](https://github.com/automuteus/automuteus) next to this `deploy` repository.
 2. Make any changes to the code or sql file that you would like.
 3. In the `docker-compose.yml` comment out the line `image: automuteus/automuteus:${AUTOMUTEUS_TAG:?err}` and uncomment the `build: ../automuteus` line (and modify path if required).
-4. Use the command `docker-compose build` to build the set of docker images with your change
+4. Use the following command to build the set of docker images with your change
+
+   ```bash
+   COMPOSE_DOCKER_CLI_BUILD=1 DOCKER_BUILDKIT=1 docker-compose build
+   ```
+
 5. Start the stack with `docker-compose up`
 
 Just remember that you will need to do a rebuild of the docker images every time you make a change.
@@ -73,6 +78,8 @@ Just remember that you will need to do a rebuild of the docker images every time
 - `AUTOMUTEUS_LISTENING`: What the bot displays it is "Listening to" in the online presence message. Recommend putting your custom command prefix here
 - `AUTOMUTEUS_GLOBAL_PREFIX`: A universal default for the bot's command prefix. The bot will respond to **both** this prefix, and any guild-specific prefixes set in settings.
 - `BASE_MAP_URL`: The URL used as the base for the map images used in lobby message and response to `.au map`. The actual URLs will be constructed as the concatenation of the following strings: `BASE_MAP_URL`, map name (`the_skeld`, `mira_hq`, `polus`, or `airship`), version (`_detailed` for detailed version only), extension and query string (`.png?raw=true`)
+- `SLASH_COMMAND_GUILD_IDS`: When registering slash commands, what guilds the interactions will be registered in. Multiple guild IDs can be specified by comma-separated list. Leave blank for global.
+- `STOP_GRACE_PERIOD`: Specify how long to wait when attempting to stop `automuteus` container before sending SIGKILL. This option prevents the container from exiting with a `SIGKILL` during the stopping process before the command deletion is complete. When using guild commands, about one minute per guild is sufficient. Defaults to `2m` (2 minutes) for safety.
 
 ### HIGHLY advanced. Probably don't ever touch these!
 
