@@ -18,7 +18,7 @@
   - ✅ bot
   - ✅ applications.commands
 - **BOT PERMISSIONS**
-  | GENERAL PERMISSIONS           | TEXT PERMISSIONS           | VIOCE PERMISSIONS    |
+  | GENERAL PERMISSIONS           | TEXT PERMISSIONS           | VOICE PERMISSIONS    |
   | ----------------------------- | -------------------------- | -------------------- |
   | ⬜ Administrator               | ✅ Send Messages            | ⬜ Connect            |
   | ⬜ View Audit Log              | ⬜ Create Public Threads    | ⬜ Speak              |
@@ -44,7 +44,7 @@ Permissions Integer: `1086680128`
 - **SCOPES**
   - ✅ bot
 - **BOT PERMISSIONS**
-  | GENERAL PERMISSIONS           | TEXT PERMISSIONS           | VIOCE PERMISSIONS    |
+  | GENERAL PERMISSIONS           | TEXT PERMISSIONS           | VOICE PERMISSIONS    |
   | ----------------------------- | -------------------------- | -------------------- |
   | ⬜ Administrator               | ⬜ Send Messages            | ⬜ Connect            |
   | ⬜ View Audit Log              | ⬜ Create Public Threads    | ⬜ Speak              |
