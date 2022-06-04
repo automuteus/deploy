@@ -19,8 +19,8 @@ There is a [`docker-compose.yml`](docker-compose.yml) file in this repository th
 - Install [Docker](https://docs.docker.com/engine/install/) and [Docker Compose](https://docs.docker.com/compose/install/) on the machine you will be using to host AutoMuteUs
 - Download the [`docker-compose.yml`](docker-compose.yml) from this repository, and create a `.env` file in the same directory that will contain your Environment Variables. On Linux/UNIX systems you can use `touch .env` to create this file, but a template [`sample.env`](sample.env) is provided in this repository for reference. 
 - Provide your specific Environment Variables in the `.env` file, as relevant to your configuration. Please see the Environment Variables reference further down in this Readme for details, as well as the [`sample.env`](sample.env) provided.
-- Run `docker-compose pull`. This will download the latest built Docker images from Dockerhub that are required to run AutoMuteUs.
-- Run `docker-compose up -d` to start all the containers required for AutoMuteUs to function. The containers will now be running in the background, but you can view the logs for the containers using `docker-compose logs`, or `docker-compose logs -f` to follow along as new log entries are generated.
+- Run `docker compose pull`. This will download the latest built Docker images from Dockerhub that are required to run AutoMuteUs.
+- Run `docker compose up -d` to start all the containers required for AutoMuteUs to function. The containers will now be running in the background, but you can view the logs for the containers using `docker compose logs`, or `docker compose logs -f` to follow along as new log entries are generated.
 
 ## unRAID
 
@@ -46,10 +46,10 @@ The easiest way to test changes is to use docker-compose, but instead of using a
 4. Use the following command to build the set of docker images with your change
 
    ```bash
-   COMPOSE_DOCKER_CLI_BUILD=1 DOCKER_BUILDKIT=1 docker-compose build
+   COMPOSE_DOCKER_CLI_BUILD=1 DOCKER_BUILDKIT=1 docker compose build
    ```
 
-5. Start the stack with `docker-compose up`
+5. Start the stack with `docker compose up`
 
 Just remember that you will need to do a rebuild of the docker images every time you make a change.
 
