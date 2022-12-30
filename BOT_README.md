@@ -18,49 +18,51 @@
   - ✅ bot
   - ✅ applications.commands
 - **BOT PERMISSIONS**
-  | GENERAL PERMISSIONS           | TEXT PERMISSIONS           | VOICE PERMISSIONS    |
-  | ----------------------------- | -------------------------- | -------------------- |
-  | ⬜ Administrator               | ✅ Send Messages            | ⬜ Connect            |
-  | ⬜ View Audit Log              | ⬜ Create Public Threads    | ⬜ Speak              |
-  | ⬜ View Server Insights        | ⬜ Create Private Threads   | ⬜ Video              |
-  | ⬜ Manage Server               | ⬜ Send Messages in Threads | ✅ Mute Members       |
-  | ⬜ Manage Roles                | ⬜ Send TTS Messages        | ✅ Deafen Members     |
-  | ⬜ Manage Channels             | ✅ Manage Messages          | ⬜ Move Members       |
-  | ⬜ Kick Members                | ⬜ Manage Threads           | ⬜ Use Voice Activity |
-  | ⬜ Ban Members                 | ✅ Embed Links              | ⬜ Priority Speaker   |
-  | ⬜ Create Instant Invite       | ⬜ Attach Files             |                      |
-  | ⬜ Change Nickname             | ✅ Read Message History     |                      |
-  | ⬜ Manage Nicknames            | ⬜ Mention Everyone         |                      |
-  | ✅ Manage Emojis and Stickers  | ✅ Use External Emojis      |                      |
-  | ⬜ Manage Webhooks             | ⬜ Use External Stickers    |                      |
-  | ✅ Read Messages/View Channels | ✅ Add Reactions            |                      |
-  | ⬜ Manage Events               | ⬜ Use Slash Commands       |                      |
-  | ⬜ Moderate Members            |                            |                      |
+  | GENERAL PERMISSIONS                  | TEXT PERMISSIONS           | VOICE PERMISSIONS         |
+  | ------------------------------------ | -------------------------- | ------------------------- |
+  | ⬜ Administrator                      | ✅ Send Messages            | ⬜ Connect                 |
+  | ⬜ View Audit Log                     | ⬜ Create Public Threads    | ⬜ Speak                   |
+  | ⬜ Manage Server                      | ⬜ Create Private Threads   | ⬜ Video                   |
+  | ⬜ Manage Roles                       | ⬜ Send Messages in Threads | ✅ Mute Members            |
+  | ⬜ Manage Channels                    | ⬜ Send TTS Messages        | ✅ Deafen Members          |
+  | ⬜ Kick Members                       | ✅ Manage Messages          | ⬜ Move Members            |
+  | ⬜ Ban Members                        | ⬜ Manage Threads           | ⬜ Use Voice Activity      |
+  | ⬜ Create Instant Invite              | ✅ Embed Links              | ⬜ Priority Speaker        |
+  | ⬜ Change Nickname                    | ✅ Attach Files             | ⬜ Request To Speak        |
+  | ⬜ Manage Nicknames                   | ✅ Read Message History     | ⬜ Use Embedded Activities |
+  | ✅ Manage Emojis and Stickers         | ⬜ Mention Everyone         |                           |
+  | ⬜ Manage Webhooks                    | ✅ Use External Emojis      |                           |
+  | ✅ Read Messages/View Channels        | ⬜ Use External Stickers    |                           |
+  | ⬜ Manage Events                      | ✅ Add Reactions            |                           |
+  | ⬜ Moderate Members                   | ⬜ Use Slash Commands       |                           |
+  | ⬜ View Server Insights               |                            |                           |
+  | ⬜ View Creator Monetization Insights |                            |                           |
 
-Permissions Integer: `1086680128`
+Permissions Integer: `1086712896`
 
 ### For the extra worker bot
 
 - **SCOPES**
   - ✅ bot
 - **BOT PERMISSIONS**
-  | GENERAL PERMISSIONS           | TEXT PERMISSIONS           | VOICE PERMISSIONS    |
-  | ----------------------------- | -------------------------- | -------------------- |
-  | ⬜ Administrator               | ⬜ Send Messages            | ⬜ Connect            |
-  | ⬜ View Audit Log              | ⬜ Create Public Threads    | ⬜ Speak              |
-  | ⬜ View Server Insights        | ⬜ Create Private Threads   | ⬜ Video              |
-  | ⬜ Manage Server               | ⬜ Send Messages in Threads | ✅ Mute Members       |
-  | ⬜ Manage Roles                | ⬜ Send TTS Messages        | ✅ Deafen Members     |
-  | ⬜ Manage Channels             | ⬜ Manage Messages          | ⬜ Move Members       |
-  | ⬜ Kick Members                | ⬜ Manage Threads           | ⬜ Use Voice Activity |
-  | ⬜ Ban Members                 | ⬜ Embed Links              | ⬜ Priority Speaker   |
-  | ⬜ Create Instant Invite       | ⬜ Attach Files             |                      |
-  | ⬜ Change Nickname             | ⬜ Read Message History     |                      |
-  | ⬜ Manage Nicknames            | ⬜ Mention Everyone         |                      |
-  | ⬜ Manage Emojis and Stickers  | ⬜ Use External Emojis      |                      |
-  | ⬜ Manage Webhooks             | ⬜ Use External Stickers    |                      |
-  | ⬜ Read Messages/View Channels | ⬜ Add Reactions            |                      |
-  | ⬜ Manage Events               | ⬜ Use Slash Commands       |                      |
-  | ⬜ Moderate Members            |                            |                      |
+  | GENERAL PERMISSIONS                  | TEXT PERMISSIONS           | VOICE PERMISSIONS         |
+  | ------------------------------------ | -------------------------- | ------------------------- |
+  | ⬜ Administrator                      | ⬜ Send Messages            | ⬜ Connect                 |
+  | ⬜ View Audit Log                     | ⬜ Create Public Threads    | ⬜ Speak                   |
+  | ⬜ Manage Server                      | ⬜ Create Private Threads   | ⬜ Video                   |
+  | ⬜ Manage Roles                       | ⬜ Send Messages in Threads | ✅ Mute Members            |
+  | ⬜ Manage Channels                    | ⬜ Send TTS Messages        | ✅ Deafen Members          |
+  | ⬜ Kick Members                       | ⬜ Manage Messages          | ⬜ Move Members            |
+  | ⬜ Ban Members                        | ⬜ Manage Threads           | ⬜ Use Voice Activity      |
+  | ⬜ Create Instant Invite              | ⬜ Embed Links              | ⬜ Priority Speaker        |
+  | ⬜ Change Nickname                    | ⬜ Attach Files             | ⬜ Request To Speak        |
+  | ⬜ Manage Nicknames                   | ⬜ Read Message History     | ⬜ Use Embedded Activities |
+  | ⬜ Manage Emojis and Stickers         | ⬜ Mention Everyone         |                           |
+  | ⬜ Manage Webhooks                    | ⬜ Use External Emojis      |                           |
+  | ⬜ Read Messages/View Channels        | ⬜ Use External Stickers    |                           |
+  | ⬜ Manage Events                      | ⬜ Add Reactions            |                           |
+  | ⬜ Moderate Members                   | ⬜ Use Slash Commands       |                           |
+  | ⬜ View Server Insights               |                            |                           |
+  | ⬜ View Creator Monetization Insights |                            |                           |
 
 Permissions Integer: `12582912`
