@@ -76,15 +76,14 @@ Just remember that you will need to do a rebuild of the docker images every time
 - `CAPTURE_TIMEOUT`: How many seconds of no capture events received before the Bot will terminate the associated game/connection. Defaults to 36000 seconds.
 - `REDIS_PASS`: Your Redis database password, if necessary.
 - `AUTOMUTEUS_LISTENING`: What the bot displays it is "Listening to" in the online presence message. Recommend putting your custom command prefix here
-- `AUTOMUTEUS_GLOBAL_PREFIX`: A universal default for the bot's command prefix. The bot will respond to **both** this prefix, and any guild-specific prefixes set in settings.
 - `BASE_MAP_URL`: The URL used as the base for the map images used in lobby message and response to `.au map`. The actual URLs will be constructed as the concatenation of the following strings: `BASE_MAP_URL`, map name (`the_skeld`, `mira_hq`, `polus`, or `airship`), version (`_detailed` for detailed version only), extension and query string (`.png?raw=true`)
 - `SLASH_COMMAND_GUILD_IDS`: When registering slash commands, what guilds the interactions will be registered in. Multiple guild IDs can be specified by comma-separated list. Leave blank for global.
 - `STOP_GRACE_PERIOD`: Specify how long to wait when attempting to stop `automuteus` container before sending SIGKILL. This option prevents the container from exiting with a `SIGKILL` during the stopping process before the command deletion is complete. When using guild commands, about one minute per guild is sufficient. Defaults to `2m` (2 minutes) for safety.
 
 ### HIGHLY advanced. Probably don't ever touch these!
 
-- `NUM_SHARDS`: Num shards provided to the Discord API.
-- `SHARD_ID`: Shard ID used to identify with the Discord API. Needs to be strictly less than `NUM_SHARDS`
+- `SHARDs`: Comma-separated list of shards to use for this bot instance. For example, `0,1,2` runs shards 0, 1, and 2. *Order is important*, as `0,1` is functionally different than `1,0` (the former would register commands if ran as the official bot, whereas the latter would not).
+- `NUM_SHARDS`: Sum of how many shards are being ran across all instances. This needs to be strictly GREATER than than the max value provided for `SHARDS`. For example, if running two bot instances with `0,1` and `2,3` provided for `SHARDS` to the instances, `NUM_SHARDS` should be `4` for both instances (max + 1).
 
 ## Galactus
 
