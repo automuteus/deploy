@@ -8,7 +8,7 @@ services:
     # - Use an old prebuilt image (prior to 6.16.1)
     #image: denverquane/amongusdiscord:${AUTOMUTEUS_TAG:?err}
     # - Build image from local source
-    #build: ../automuteus
+    # build: ../automuteus
     # - Build image from github directly
     #build: https://github.com/automuteus/automuteus.git
 
@@ -24,7 +24,6 @@ services:
       - EMOJI_GUILD_ID=${EMOJI_GUILD_ID:-}
       - CAPTURE_TIMEOUT=${CAPTURE_TIMEOUT:-}
       - AUTOMUTEUS_LISTENING=${AUTOMUTEUS_LISTENING:-}
-      - AUTOMUTEUS_GLOBAL_PREFIX=${AUTOMUTEUS_GLOBAL_PREFIX:-}
       - BASE_MAP_URL=${BASE_MAP_URL:-}
       - SLASH_COMMAND_GUILD_IDS=${SLASH_COMMAND_GUILD_IDS:-}
 
@@ -32,6 +31,8 @@ services:
       - REDIS_ADDR=${AUTOMUTEUS_REDIS_ADDR}
       - GALACTUS_ADDR=${GALACTUS_ADDR}
       - POSTGRES_ADDR=${POSTGRES_ADDR}
+      # - SHARDS=0,1
+      # - NUM_SHARDS=2
     stop_grace_period: ${STOP_GRACE_PERIOD:-2m}
     depends_on:
       - redis
@@ -62,6 +63,7 @@ services:
       - BROKER_PORT=${BROKER_PORT}
       - REDIS_ADDR=${GALACTUS_REDIS_ADDR}
       - GALACTUS_PORT=${GALACTUS_PORT}
+      # - NUM_SHARDS=2
     depends_on:
       - redis
 
