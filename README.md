@@ -58,8 +58,6 @@ Just remember that you will need to do a rebuild of the docker images every time
 ### Required
 
 - `DISCORD_BOT_TOKEN`: The Bot Token used by the bot to authenticate with Discord.
-- `REDIS_ADDR`: The host and port at which your Redis database instance is accessible. Ex: `192.168.1.42:6379`
-- `POSTGRES_ADDR`: Address (host:port) at which Postgres is accessible. Used by automuteus to store game statistics. 
 - `POSTGRES_USER`: Username for authentication with Postgres.
 - `POSTGRES_PASS`: Password for authentication with Postgres.
 - `GALACTUS_HOST`: The **externally-accessible URL** for Galactus. 
@@ -68,7 +66,7 @@ Just remember that you will need to do a rebuild of the docker images every time
   **You must specify `http://` or `https://` accordingly, and specify the port if non-8123. For example, `https://your-app.herokuapp.com:443`**
 
 ### Optional
-
+- `API_PORT`: Port on which the AutoMuteUs API will be accessible. Defaults to `5000`
 - `WORKER_BOT_TOKENS`: A comma-separated list of extra tokens to be used for mute/deafen.
 - `EMOJI_GUILD_ID`: If your bot is a member of multiple guilds, this ID can be used to specify the single guild that it should use for emojis (no need to add the emojis to ALL servers).
 - `CAPTURE_TIMEOUT`: How many seconds of no capture events received before the Bot will terminate the associated game/connection. Defaults to 36000 seconds.
@@ -80,10 +78,11 @@ Just remember that you will need to do a rebuild of the docker images every time
 
 ### HIGHLY advanced. Probably don't ever touch these!
 
+- `REDIS_ADDR`: The host and port at which your Redis database instance is accessible. Ex: `redis:6379`
+- `POSTGRES_ADDR`: Address (host:port) at which Postgres is accessible. Used by automuteus to store game statistics. 
 - `SHARDS`: Comma-separated list of shards to use for this bot instance. For example, `0,1,2` runs shards 0, 1, and 2. *Order is important*, as `0,1` is functionally different than `1,0` (the former would register commands if ran as the official bot, whereas the latter would not).
 - `NUM_SHARDS`: Sum of how many shards are being ran across all instances. This needs to be strictly GREATER than than the max value provided for `SHARDS`. For example, if running two bot instances with `0,1` and `2,3` provided for `SHARDS` to the instances, `NUM_SHARDS` should be `4` for both instances (max + 1).
 
 ## Galactus
 
-Galactus is a program used to speed up muting and deafening (which is typically constrained by Discord rate-limits). It allows for an arbitrary number of tokens to be provided for faster muting/deafening, but also supports capture-side bots.
-A guide to setup your own capture-side bot can be found [here,](https://youtu.be/jKcEW5qpk8E) and the repo for Galactus is [here.](https://github.com/automuteus/galactus)
+Galactus is the message broker for information sent from capture clients. The repo for Galactus can be found [here](https://github.com/automuteus/galactus)
