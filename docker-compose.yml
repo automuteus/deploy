@@ -57,7 +57,6 @@ services:
     restart: always
     environment:
       # Do **NOT** change these
-      - DISCORD_BOT_TOKEN=${DISCORD_BOT_TOKEN:?err}
       - BROKER_PORT=${BROKER_PORT}
       - REDIS_ADDR=${REDIS_ADDR}
       # - NUM_SHARDS=2
