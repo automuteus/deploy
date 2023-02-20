@@ -11,7 +11,8 @@ services:
     # build: ../automuteus
     # - Build image from github directly
     #build: https://github.com/automuteus/automuteus.git
-
+    ports:
+      - ${API_PORT:-5000}:${SERVICE_PORT}
     restart: always
     environment:
       # These are required and will fail if not present
@@ -21,15 +22,15 @@ services:
       - POSTGRES_PASS=${POSTGRES_PASS:?err}
 
       # These Variables are optional
+      - WORKER_BOT_TOKENS=${WORKER_BOT_TOKENS:-}
       - EMOJI_GUILD_ID=${EMOJI_GUILD_ID:-}
       - CAPTURE_TIMEOUT=${CAPTURE_TIMEOUT:-}
       - AUTOMUTEUS_LISTENING=${AUTOMUTEUS_LISTENING:-}
       - BASE_MAP_URL=${BASE_MAP_URL:-}
       - SLASH_COMMAND_GUILD_IDS=${SLASH_COMMAND_GUILD_IDS:-}
 
-      # Do **NOT** change this
-      - REDIS_ADDR=${AUTOMUTEUS_REDIS_ADDR}
-      - GALACTUS_ADDR=${GALACTUS_ADDR}
+      # Do **NOT** change these
+      - REDIS_ADDR=${REDIS_ADDR}
       - POSTGRES_ADDR=${POSTGRES_ADDR}
       # - SHARDS=0,1
       # - NUM_SHARDS=2
@@ -46,7 +47,7 @@ services:
     # - Use a prebuilt image
     image: automuteus/galactus:${GALACTUS_TAG:?err}
     # - Build image from local source
-    #build: ../galactus
+    # build: ../galactus
     # - Build image from github directly
     #build: https://github.com/automuteus/galactus.git
 
@@ -55,14 +56,9 @@ services:
       - ${GALACTUS_EXTERNAL_PORT:-8123}:${BROKER_PORT}
     restart: always
     environment:
-      # This Variable is optional
-      - WORKER_BOT_TOKENS=${WORKER_BOT_TOKENS:-}
-
       # Do **NOT** change these
-      - DISCORD_BOT_TOKEN=${DISCORD_BOT_TOKEN:?err}
       - BROKER_PORT=${BROKER_PORT}
-      - REDIS_ADDR=${GALACTUS_REDIS_ADDR}
-      - GALACTUS_PORT=${GALACTUS_PORT}
+      - REDIS_ADDR=${REDIS_ADDR}
       # - NUM_SHARDS=2
     depends_on:
       - redis
