@@ -58,8 +58,8 @@ The easiest way to test changes is to use `docker compose`, but instead of using
   **You must specify `http://` or `https://` accordingly, and specify the port if non-8123. For example, `https://your-app.herokuapp.com:443`**
 
 ### Optional
-- `API_PORT`: Port on which the AutoMuteUs API will be accessible. Defaults to `5000`
-- `API_SERVER_URL`: URL (provide scheme and port) that can be used to access the AutoMuteUs API. Used for generating Swagger Docs. Defaults to `http://localhost:5000`
+- `API_PORT`: Port on which the AutoMuteUs API will be accessible. Defaults to `80`
+- `API_SERVER_URL`: URL (provide scheme) that can be used to access the AutoMuteUs API. Used for generating Swagger Docs. Defaults to `http://localhost`
 - `API_ADMIN_PASS`: Admin Password for the API. Defaults to `automuteus`
 - `WORKER_BOT_TOKENS`: A comma-separated list of extra tokens to be used for mute/deafen.
 - `EMOJI_GUILD_ID`: If your bot is a member of multiple guilds, this ID can be used to specify the single guild that it should use for emojis (no need to add the emojis to ALL servers).
