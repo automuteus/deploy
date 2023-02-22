@@ -38,20 +38,12 @@ AutoMuteUs exists in the FreeBSD Ports tree as [`games/automuteus`](https://www.
 If, for whatever reason, you _really_ want to self host, but also don't want to figure out Docker or use Windows and hate Docker because of it (I don't blame you) you can self host [2.4.3](https://github.com/denverquane/automuteus/releases/tag/2.4.3) instead. **If you are using this method, continue using the newest capture!** But note that 2.4.3 does not support 15 players' lobby and new player colors!
 
 ## Development Instructions
-The easiest way to test changes is to use docker-compose, but instead of using a pre-built image, building the automuteus docker image from source. Thankfully, this is easy to do:
+The easiest way to test changes is to use `docker compose`, but instead of using a pre-built image, building the automuteus docker image from source. Thankfully, this is easy to do:
 
 1. Clone [automuteus/automuteus](https://github.com/automuteus/automuteus) next to this `deploy` repository.
 2. Make any changes to the code or sql file that you would like.
 3. In the `docker-compose.yml` comment out the line `image: automuteus/automuteus:${AUTOMUTEUS_TAG:?err}` and uncomment the `build: ../automuteus` line (and modify path if required).
-4. Use the following command to build the set of docker images with your change
-
-   ```bash
-   COMPOSE_DOCKER_CLI_BUILD=1 DOCKER_BUILDKIT=1 docker compose build
-   ```
-
-5. Start the stack with `docker compose up`
-
-Just remember that you will need to do a rebuild of the docker images every time you make a change.
+4. Start the stack with `docker compose up --build`
 
 ## Environment Variables
 
@@ -67,6 +59,8 @@ Just remember that you will need to do a rebuild of the docker images every time
 
 ### Optional
 - `API_PORT`: Port on which the AutoMuteUs API will be accessible. Defaults to `5000`
+- `API_SERVER_URL`: URL (provide scheme and port) that can be used to access the AutoMuteUs API. Used for generating Swagger Docs. Defaults to `http://localhost:5000`
+- `API_ADMIN_PASS`: Admin Password for the API. Defaults to `automuteus`
 - `WORKER_BOT_TOKENS`: A comma-separated list of extra tokens to be used for mute/deafen.
 - `EMOJI_GUILD_ID`: If your bot is a member of multiple guilds, this ID can be used to specify the single guild that it should use for emojis (no need to add the emojis to ALL servers).
 - `CAPTURE_TIMEOUT`: How many seconds of no capture events received before the Bot will terminate the associated game/connection. Defaults to 36000 seconds.
