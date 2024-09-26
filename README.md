@@ -66,17 +66,20 @@ Just remember that you will need to do a rebuild of the docker images every time
   **You must specify `http://` or `https://` accordingly, and specify the port if non-8123. For example, `https://your-app.herokuapp.com:443`**
 
 ### Optional
-- `API_PORT`: Port on which the AutoMuteUs API will be accessible. Defaults to `80`
-- `API_SERVER_URL`: URL (provide scheme) that can be used to access the AutoMuteUs API. Used for generating Swagger Docs. Defaults to `http://localhost`
-- `API_ADMIN_PASS`: Admin Password for the API. Defaults to `automuteus`
 - `WORKER_BOT_TOKENS`: A comma-separated list of extra tokens to be used for mute/deafen.
 - `EMOJI_GUILD_ID`: If your bot is a member of multiple guilds, this ID can be used to specify the single guild that it should use for emojis (no need to add the emojis to ALL servers).
 - `CAPTURE_TIMEOUT`: How many seconds of no capture events received before the Bot will terminate the associated game/connection. Defaults to 36000 seconds.
 - `REDIS_PASS`: Your Redis database password, if necessary.
 - `AUTOMUTEUS_LISTENING`: What the bot displays it is "Listening to" in the online presence message. Defaults to `/help`
-- `BASE_MAP_URL`: The URL used as the base for the map images used in lobby message and response to `/map`. The actual URLs will be constructed as the concatenation of the following strings: `BASE_MAP_URL`, map name (`the_skeld`, `mira_hq`, `polus`, or `airship`), version (`_detailed` for detailed version only), extension and query string (`.png?raw=true`)
-- `SLASH_COMMAND_GUILD_IDS`: When registering slash commands, what guilds the interactions will be registered in. Multiple guild IDs can be specified by comma-separated list. Leave blank for global.
+- `SLASH_COMMAND_GUILD_IDS`: When registering slash commands, what guilds the interactions will be registered in. Multiple guild IDs can be specified by comma-separated list. Leave blank to register commands globally.
+
+ 
+### Optional and Advanced
+- `BASE_MAP_URL`: The URL used as the base for the map images used in lobby message and response to `/map`. The actual URLs will be constructed as the concatenation of the following strings: `BASE_MAP_URL`, map name (`the_skeld`, `mira_hq`, `polus`, or `airship`), version (`_detailed` for detailed version only), and extension (`.png`). Defaults to `https://raw.githubusercontent.com/automuteus/automuteus/refs/heads/master/assets/maps/`.-
 - `STOP_GRACE_PERIOD`: Specify how long to wait when attempting to stop `automuteus` container before sending SIGKILL. This option prevents the container from exiting with a `SIGKILL` during the stopping process before the command deletion is complete. When using guild commands, about one minute per guild is sufficient. Defaults to `2m` (2 minutes) for safety.
+- `API_PORT`: Port on which the AutoMuteUs API will be accessible. Defaults to `80`
+- `API_SERVER_URL`: URL (provide scheme) that can be used to access the AutoMuteUs API. Used for generating Swagger Docs. Defaults to `http://localhost`
+- `API_ADMIN_PASS`: Admin Password for the API. Defaults to `automuteus`
 
 ### HIGHLY advanced. Probably don't ever touch these!
 
