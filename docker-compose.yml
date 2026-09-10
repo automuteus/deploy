@@ -54,13 +54,17 @@ services:
       - "redis-data:/data"
 
   postgres:
-    image: postgres:12-alpine
+    # Upgrading from an older major version? See "Upgrading Postgres" in README.md;
+    # a newer major version cannot open an existing data volume without a migration.
+    image: postgres:18-alpine
     restart: always
     environment:
       - POSTGRES_USER=${POSTGRES_USER}
       - POSTGRES_PASSWORD=${POSTGRES_PASS}
     volumes:
-      - "postgres-data:/var/lib/postgresql/data"
+      # Postgres 18+ images keep data in a version-specific directory under /var/lib/postgresql,
+      # so the volume is mounted there rather than at the old /var/lib/postgresql/data.
+      - "postgres-data:/var/lib/postgresql"
 
 volumes:
   bot-logs:
