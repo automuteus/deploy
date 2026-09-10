@@ -16,3 +16,8 @@
 
 # Config files
 .env
+
+# Local docker compose overrides (copy docker-compose.override.sample.yml)
+docker-compose.override.yml
+compose.override.yml
+compose.override.yaml

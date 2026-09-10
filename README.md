@@ -38,20 +38,29 @@ AutoMuteUs exists in the FreeBSD Ports tree as [`games/automuteus`](https://www.
 If, for whatever reason, you _really_ want to self host, but also don't want to figure out Docker or use Windows and hate Docker because of it (I don't blame you) you can self host [2.4.3](https://github.com/denverquane/automuteus/releases/tag/2.4.3) instead. **If you are using this method, continue using the newest capture!** But note that 2.4.3 does not support 15 players' lobby and new player colors!
 
 ## Development Instructions
-The easiest way to test changes is to use `docker compose`, but instead of using a pre-built image, building the automuteus docker image from source. Thankfully, this is easy to do:
 
-1. Clone [automuteus/automuteus](https://github.com/automuteus/automuteus) next to this `deploy` repository.
-2. Make any changes to the code or sql file that you would like.
-3. In the `docker-compose.yml` comment out the line `image: automuteus/automuteus:${AUTOMUTEUS_TAG:?err}` and uncomment the `build: ../automuteus` line (and modify path if required).
-4. Use the following command to build the set of docker images with your change
+The easiest way to test changes is to run the same `docker compose` stack, but build the `automuteus` and `galactus`
+images from source instead of pulling them. Docker Compose merges a `docker-compose.override.yml` file into
+`docker-compose.yml` automatically if one exists, and a ready-made override is provided:
+
+1. Clone [automuteus/automuteus](https://github.com/automuteus/automuteus) next to this `deploy` repository, so the
+   two directories are siblings. Both the bot and Galactus are built from that one repository.
+2. Copy the sample override into place (it is gitignored, so edit it freely):
 
    ```bash
-   COMPOSE_DOCKER_CLI_BUILD=1 DOCKER_BUILDKIT=1 docker compose build
+   cp docker-compose.override.sample.yml docker-compose.override.yml
    ```
 
-5. Start the stack with `docker compose up`
+   If your checkout lives somewhere else, change the `context` paths in the copy.
+3. Make any changes to the code or sql file that you would like.
+4. Build and start the stack:
 
-Just remember that you will need to do a rebuild of the docker images every time you make a change.
+   ```bash
+   docker compose up --build
+   ```
+
+Just remember to pass `--build` (or run `docker compose build`) every time you make a change, so the images are
+rebuilt. Delete `docker-compose.override.yml` to go back to the published images.
 
 ## Environment Variables
 
@@ -87,4 +96,6 @@ Just remember that you will need to do a rebuild of the docker images every time
 
 ## Galactus
 
-Galactus is the message broker for information sent from capture clients. The repo for Galactus can be found [here](https://github.com/automuteus/galactus)
+Galactus is the message broker for information sent from capture clients. It lives in the
+[automuteus/automuteus](https://github.com/automuteus/automuteus) repository under `cmd/galactus` and is released
+alongside the bot under the same version tag, which is why `AUTOMUTEUS_TAG` selects both images.
