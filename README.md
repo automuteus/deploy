@@ -14,6 +14,16 @@ Docker compose is the simplest and recommended method for self-hosting AutoMuteU
 
 There is a [`docker-compose.yml`](docker-compose.yml) file in this repository that will provide all the constituent components to run AutoMuteUs.
 
+The HTTP API now runs in its own `api` container, published as `automuteus/api`.
+Its image tag defaults to `AUTOMUTEUS_TAG`; `API_TAG` can override it. Use a release
+that includes the standalone API image. Existing API URLs and `API_PORT` still
+work: Compose now forwards that port to the API container instead of the bot.
+The API needs Redis and Postgres, but no Discord token or running bot process.
+For the first upgrade, run `docker compose stop automuteus`, then
+`docker compose up -d`. This releases the old bot container's published API port
+before the new API container binds it. Later API updates can use
+`docker compose up -d api` independently of the bot.
+
 ### Steps:
 
 - Install [Docker](https://docs.docker.com/engine/install/) and [Docker Compose](https://docs.docker.com/compose/install/) on the machine you will be using to host AutoMuteUs
@@ -39,12 +49,12 @@ If, for whatever reason, you _really_ want to self host, but also don't want to 
 
 ## Development Instructions
 
-The easiest way to test changes is to run the same `docker compose` stack, but build the `automuteus` and `galactus`
+The easiest way to test changes is to run the same `docker compose` stack, but build the `automuteus`, `galactus`, and `api`
 images from source instead of pulling them. Docker Compose merges a `docker-compose.override.yml` file into
 `docker-compose.yml` automatically if one exists, and a ready-made override is provided:
 
 1. Clone [automuteus/automuteus](https://github.com/automuteus/automuteus) next to this `deploy` repository, so the
-   two directories are siblings. Both the bot and Galactus are built from that one repository.
+   two directories are siblings. The Bot, Galactus, and the API are built from that one repository.
 2. Copy the sample override into place (it is gitignored, so edit it freely):
 
    ```bash
@@ -61,6 +71,12 @@ images from source instead of pulling them. Docker Compose merges a `docker-comp
 
 Just remember to pass `--build` (or run `docker compose build`) every time you make a change, so the images are
 rebuilt. Delete `docker-compose.override.yml` to go back to the published images.
+
+The local API is available at `http://localhost:8080`. To use another port, set
+`API_PORT=9090` in `.env` and run `docker compose up -d` to recreate the API and bot
+containers. With `API_SERVER_URL` left blank, capture links will then use
+`http://localhost:9090/open/link`. If capture runs on another machine, also set
+`API_SERVER_URL` to the API's reachable URL, including the port.
 
 ## Upgrading Postgres
 
@@ -148,8 +164,9 @@ major upgrades can be done in place with `pg_upgrade --link` on the same volume,
 ### Optional and Advanced
 - `BASE_MAP_URL`: The URL used as the base for the map images used in lobby message and response to `/map`. The actual URLs will be constructed as the concatenation of the following strings: `BASE_MAP_URL`, map name (`the_skeld`, `mira_hq`, `polus`, or `airship`), version (`_detailed` for detailed version only), and extension (`.png`). Defaults to `https://raw.githubusercontent.com/automuteus/automuteus/refs/heads/master/assets/maps/`.-
 - `STOP_GRACE_PERIOD`: Specify how long to wait when attempting to stop `automuteus` container before sending SIGKILL. This option prevents the container from exiting with a `SIGKILL` during the stopping process before the command deletion is complete. When using guild commands, about one minute per guild is sufficient. Defaults to `2m` (2 minutes) for safety.
-- `API_PORT`: Port on which the AutoMuteUs API will be accessible. Defaults to `80`
-- `API_SERVER_URL`: URL (provide scheme) that can be used to access the AutoMuteUs API. Used for generating Swagger Docs. Defaults to `http://localhost`
+- `API_PORT`: Public host port for the separate API container. Defaults to `8080`; set `80` to keep the previous default. `SERVICE_PORT` selects the API's internal listening port (default `5000`).
+- `API_TAG`: Optional API image version override; defaults to `AUTOMUTEUS_TAG`.
+- `API_SERVER_URL`: Public API URL (including scheme and any nonstandard port), used for capture links and Swagger Docs. Defaults to `http://localhost:${API_PORT:-8080}` in Compose, so changing `API_PORT` also updates capture links. Set this explicitly when capture runs on another machine or the API is behind a reverse proxy.
 - `API_ADMIN_PASS`: Admin Password for the API. Defaults to `automuteus`
 
 ### HIGHLY advanced. Probably don't ever touch these!

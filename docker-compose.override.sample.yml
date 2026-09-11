@@ -19,3 +19,9 @@ services:
     build:
       context: ../automuteus
       dockerfile: Dockerfile.galactus
+
+  api:
+    image: automuteus/api:local
+    build:
+      context: ../automuteus
+      dockerfile: Dockerfile.api
