@@ -38,20 +38,91 @@ AutoMuteUs exists in the FreeBSD Ports tree as [`games/automuteus`](https://www.
 If, for whatever reason, you _really_ want to self host, but also don't want to figure out Docker or use Windows and hate Docker because of it (I don't blame you) you can self host [2.4.3](https://github.com/denverquane/automuteus/releases/tag/2.4.3) instead. **If you are using this method, continue using the newest capture!** But note that 2.4.3 does not support 15 players' lobby and new player colors!
 
 ## Development Instructions
-The easiest way to test changes is to use `docker compose`, but instead of using a pre-built image, building the automuteus docker image from source. Thankfully, this is easy to do:
 
-1. Clone [automuteus/automuteus](https://github.com/automuteus/automuteus) next to this `deploy` repository.
-2. Make any changes to the code or sql file that you would like.
-3. In the `docker-compose.yml` comment out the line `image: automuteus/automuteus:${AUTOMUTEUS_TAG:?err}` and uncomment the `build: ../automuteus` line (and modify path if required).
-4. Use the following command to build the set of docker images with your change
+The easiest way to test changes is to run the same `docker compose` stack, but build the `automuteus` and `galactus`
+images from source instead of pulling them. Docker Compose merges a `docker-compose.override.yml` file into
+`docker-compose.yml` automatically if one exists, and a ready-made override is provided:
+
+1. Clone [automuteus/automuteus](https://github.com/automuteus/automuteus) next to this `deploy` repository, so the
+   two directories are siblings. Both the bot and Galactus are built from that one repository.
+2. Copy the sample override into place (it is gitignored, so edit it freely):
 
    ```bash
-   COMPOSE_DOCKER_CLI_BUILD=1 DOCKER_BUILDKIT=1 docker compose build
+   cp docker-compose.override.sample.yml docker-compose.override.yml
    ```
 
-5. Start the stack with `docker compose up`
+   If your checkout lives somewhere else, change the `context` paths in the copy.
+3. Make any changes to the code or sql file that you would like.
+4. Build and start the stack:
 
-Just remember that you will need to do a rebuild of the docker images every time you make a change.
+   ```bash
+   docker compose up --build
+   ```
+
+Just remember to pass `--build` (or run `docker compose build`) every time you make a change, so the images are
+rebuilt. Delete `docker-compose.override.yml` to go back to the published images.
+
+## Upgrading Postgres
+
+The `docker-compose.yml` file now runs `postgres:18-alpine`; earlier versions of this file ran `postgres:12-alpine`.
+Postgres cannot open a data directory created by an older major version, so **if you already have a running
+installation, pulling the new compose file and running `docker compose up` will leave the `postgres` container
+crash-looping** with an error about incompatible database files (or, on 18+, a message about `pg_upgrade`). Nothing
+is deleted when that happens, but the bot will not start until you migrate.
+
+Postgres only stores game statistics and premium records; guild settings live in Redis and are not affected. If you
+do not care about keeping historical stats, the quickest upgrade is to delete the Postgres volume (step 4 below) and
+skip the backup and restore steps. The bot recreates an empty schema on startup.
+
+To keep your data, dump it with the old version and restore it into the new one:
+
+1. **While still running the old compose file**, back up the database (this uses the database name that the
+   `postgres` image creates from `POSTGRES_USER`):
+
+   ```bash
+   docker compose exec postgres pg_dump -U "$POSTGRES_USER" --clean --if-exists -f /tmp/automuteus.sql
+   docker compose cp postgres:/tmp/automuteus.sql ./automuteus.sql
+   ```
+
+   On Windows, replace `"$POSTGRES_USER"` with the actual value from your `.env` file. Writing the dump inside the
+   container and copying it out avoids shell redirection re-encoding the file.
+
+2. Stop the stack. Do **not** use `docker compose down -v`, which would also delete the Redis volume and with it all
+   of your guild settings:
+
+   ```bash
+   docker compose down
+   ```
+
+3. Update `docker-compose.yml` to the new version from this repository.
+
+4. Delete the old Postgres volume. Its name is the compose project name (by default the directory name) followed by
+   `_postgres-data`; `docker volume ls` will show it:
+
+   ```bash
+   docker volume rm deploy_postgres-data
+   ```
+
+5. Start only Postgres so it can initialize a fresh data directory, then restore the dump into it:
+
+   ```bash
+   docker compose up -d postgres
+   docker compose cp ./automuteus.sql postgres:/tmp/automuteus.sql
+   docker compose exec postgres psql -U "$POSTGRES_USER" -f /tmp/automuteus.sql
+   ```
+
+   On first start the image initializes the data directory using a temporary server, then restarts. Wait until
+   `docker compose logs postgres` shows `database system is ready to accept connections` for the second time
+   before restoring; if you are too early you will see a "connection refused" error, and can simply retry.
+
+6. Start everything else:
+
+   ```bash
+   docker compose up -d
+   ```
+
+Because the 18+ images keep each major version's data in its own directory under `/var/lib/postgresql`, future
+major upgrades can be done in place with `pg_upgrade --link` on the same volume, without repeating this procedure.
 
 ## Environment Variables
 
@@ -90,4 +161,6 @@ Just remember that you will need to do a rebuild of the docker images every time
 
 ## Galactus
 
-Galactus is the message broker for information sent from capture clients. The repo for Galactus can be found [here](https://github.com/automuteus/galactus)
+Galactus is the message broker for information sent from capture clients. It lives in the
+[automuteus/automuteus](https://github.com/automuteus/automuteus) repository under `cmd/galactus` and is released
+alongside the bot under the same version tag, which is why `AUTOMUTEUS_TAG` selects both images.

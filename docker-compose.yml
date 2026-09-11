@@ -1,16 +1,6 @@
-version: "3"
-
 services:
   automuteus:
-    # Either:
-    # - Use a prebuilt image
     image: automuteus/automuteus:${AUTOMUTEUS_TAG:?err}
-    # - Use an old prebuilt image (prior to 6.16.1)
-    #image: denverquane/amongusdiscord:${AUTOMUTEUS_TAG:?err}
-    # - Build image from local source
-    # build: ../automuteus
-    # - Build image from github directly
-    #build: https://github.com/automuteus/automuteus.git
     ports:
       - ${API_PORT:-80}:${SERVICE_PORT}
     restart: always
@@ -30,12 +20,12 @@ services:
       - SLASH_COMMAND_GUILD_IDS=${SLASH_COMMAND_GUILD_IDS:-}
       - API_SERVER_URL=${API_SERVER_URL:-}
       - API_ADMIN_PASS=${API_ADMIN_PASS:-}
+      - SHARDS=${SHARDS:-}
+      - NUM_SHARDS=${NUM_SHARDS:-}
 
       # Do **NOT** change these
       - REDIS_ADDR=${REDIS_ADDR}
       - POSTGRES_ADDR=${POSTGRES_ADDR}
-      # - SHARDS=0,1
-      # - NUM_SHARDS=2
     stop_grace_period: ${STOP_GRACE_PERIOD:-2m}
     depends_on:
       - redis
@@ -45,14 +35,7 @@ services:
       - "bot-logs:/app/logs"
 
   galactus:
-    # Either:
-    # - Use a prebuilt image
-    image: automuteus/galactus:${GALACTUS_TAG:?err}
-    # - Build image from local source
-    # build: ../galactus
-    # - Build image from github directly
-    #build: https://github.com/automuteus/galactus.git
-
+    image: automuteus/galactus:${AUTOMUTEUS_TAG:?err}
     ports:
       # See sample.env for details, but in general, match the GALACTUS_EXTERNAL_PORT w/ the GALACTUS_HOST's port
       - ${GALACTUS_EXTERNAL_PORT:-8123}:${BROKER_PORT}
@@ -61,7 +44,6 @@ services:
       # Do **NOT** change these
       - BROKER_PORT=${BROKER_PORT}
       - REDIS_ADDR=${REDIS_ADDR}
-      # - NUM_SHARDS=2
     depends_on:
       - redis
 
@@ -72,13 +54,17 @@ services:
       - "redis-data:/data"
 
   postgres:
-    image: postgres:12-alpine
+    # Upgrading from an older major version? See "Upgrading Postgres" in README.md;
+    # a newer major version cannot open an existing data volume without a migration.
+    image: postgres:18-alpine
     restart: always
     environment:
       - POSTGRES_USER=${POSTGRES_USER}
       - POSTGRES_PASSWORD=${POSTGRES_PASS}
     volumes:
-      - "postgres-data:/var/lib/postgresql/data"
+      # Postgres 18+ images keep data in a version-specific directory under /var/lib/postgresql,
+      # so the volume is mounted there rather than at the old /var/lib/postgresql/data.
+      - "postgres-data:/var/lib/postgresql"
 
 volumes:
   bot-logs:

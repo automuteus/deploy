@@ -1,0 +1,21 @@
+# Development override: build the bot and Galactus from a local checkout of
+# https://github.com/automuteus/automuteus instead of pulling published images.
+#
+# Copy this file to `docker-compose.override.yml` (which is gitignored) and
+# `docker compose` will merge it into docker-compose.yml automatically.
+# See "Development Instructions" in README.md.
+services:
+  automuteus:
+    image: automuteus/automuteus:local
+    build:
+      # Path to your automuteus checkout, relative to this file.
+      # A git URL also works, e.g. https://github.com/automuteus/automuteus.git#my-branch
+      context: ../automuteus
+    # Persisted bot logs are not useful during development
+    volumes: !override []
+
+  galactus:
+    image: automuteus/galactus:local
+    build:
+      context: ../automuteus
+      dockerfile: Dockerfile.galactus
