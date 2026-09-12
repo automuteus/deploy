@@ -19,6 +19,8 @@ services:
       - API_SERVER_URL=${API_SERVER_URL:-http://localhost:${API_PORT:-8080}}
       - SHARDS=${SHARDS:-}
       - NUM_SHARDS=${NUM_SHARDS:-}
+      - LOG_FORMAT=${LOG_FORMAT:-}
+      - LOG_LEVEL=${LOG_LEVEL:-}
 
       # Do **NOT** change these
       - REDIS_ADDR=${REDIS_ADDR}
@@ -37,10 +39,18 @@ services:
       # See sample.env for details, but in general, match the GALACTUS_EXTERNAL_PORT w/ the GALACTUS_HOST's port
       - ${GALACTUS_EXTERNAL_PORT:-8123}:${BROKER_PORT}
     restart: always
+    # On SIGTERM Galactus keeps serving for DRAIN_SECONDS while refusing new capture clients, then tells the bot to
+    # end the games whose captures were connected to it (unmuting everyone) before exiting. Docker's default 10s
+    # stop timeout is too short for that sequence.
+    stop_grace_period: 30s
     environment:
       # Do **NOT** change these
       - BROKER_PORT=${BROKER_PORT}
       - REDIS_ADDR=${REDIS_ADDR}
+      # Optional
+      - DRAIN_SECONDS=${DRAIN_SECONDS:-5}
+      - LOG_FORMAT=${LOG_FORMAT:-}
+      - LOG_LEVEL=${LOG_LEVEL:-}
     depends_on:
       - redis
 
@@ -58,6 +68,8 @@ services:
       - API_PORT=${SERVICE_PORT:-5000}
       - API_SERVER_URL=${API_SERVER_URL:-http://localhost:${API_PORT:-8080}}
       - API_ADMIN_PASS=${API_ADMIN_PASS:-}
+      - LOG_FORMAT=${LOG_FORMAT:-}
+      - LOG_LEVEL=${LOG_LEVEL:-}
       - HOST=${GALACTUS_HOST:?err}
       - POSTGRES_USER=${POSTGRES_USER:?err}
       - POSTGRES_PASS=${POSTGRES_PASS:?err}

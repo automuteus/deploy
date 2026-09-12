@@ -159,6 +159,8 @@ major upgrades can be done in place with `pg_upgrade --link` on the same volume,
 - `REDIS_PASS`: Your Redis database password, if necessary.
 - `AUTOMUTEUS_LISTENING`: What the bot displays it is "Listening to" in the online presence message. Defaults to `/help`
 - `SLASH_COMMAND_GUILD_IDS`: When registering slash commands, what guilds the interactions will be registered in. Multiple guild IDs can be specified by comma-separated list. Leave blank to register commands globally.
+- `LOG_FORMAT`: `text` (default) or `json`. Applies to the bot, API, and Galactus. JSON pairs well with `docker compose logs | jq` for filtering by `guild` or `code`.
+- `LOG_LEVEL`: `debug`, `info` (default), `warn`, or `error`. `debug` shows every individual mute/deafen request; `info` shows one line per batch.
 
  
 ### Optional and Advanced
@@ -167,7 +169,8 @@ major upgrades can be done in place with `pg_upgrade --link` on the same volume,
 - `API_PORT`: Public host port for the separate API container. Defaults to `8080`; set `80` to keep the previous default. `SERVICE_PORT` selects the API's internal listening port (default `5000`).
 - `API_TAG`: Optional API image version override; defaults to `AUTOMUTEUS_TAG`.
 - `API_SERVER_URL`: Public API URL (including scheme and any nonstandard port), used for capture links and Swagger Docs. Defaults to `http://localhost:${API_PORT:-8080}` in Compose, so changing `API_PORT` also updates capture links. Set this explicitly when capture runs on another machine or the API is behind a reverse proxy.
-- `API_ADMIN_PASS`: Admin Password for the API. Defaults to `automuteus`
+- `API_ADMIN_PASS`: Admin Password for the API. Defaults to `automuteus`. Raising or clearing platform notices via `POST`/`DELETE /admin/notice` (a banner on every game's status message, or ending every game for maintenance) requires a non-default value.
+- `DRAIN_SECONDS`: How long Galactus keeps running after a stop signal, refusing new capture clients, before telling the bot to end the games whose captures were connected to it and exiting. Defaults to `5`. Compose gives the container 30 seconds to complete this.
 
 ### HIGHLY advanced. Probably don't ever touch these!
 
@@ -181,3 +184,9 @@ major upgrades can be done in place with `pg_upgrade --link` on the same volume,
 Galactus is the message broker for information sent from capture clients. It lives in the
 [automuteus/automuteus](https://github.com/automuteus/automuteus) repository under `cmd/galactus` and is released
 alongside the bot under the same version tag, which is why `AUTOMUTEUS_TAG` selects both images.
+
+Stopping or restarting the Galactus container (`docker compose restart galactus`, `docker compose down`, or an
+image upgrade) severs every capture connection. Since v9, Galactus announces this to the bot before it exits: any
+running games are ended, everyone is unmuted and undeafened, and players are told to run `/new` once it is back.
+Matches ended this way are recorded as aborted and do not count toward statistics. Bring Galactus back up first when
+upgrading, so `/new` works as soon as the bot follows.
