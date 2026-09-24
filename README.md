@@ -75,6 +75,27 @@ containers. With `API_SERVER_URL` left blank, capture links will then use
 `http://localhost:9090/open/link`. If capture runs on another machine, also set
 `API_SERVER_URL` to the API's reachable URL, including the port.
 
+## Upgrading from v8 (guild settings)
+
+Up to v8, guild settings (language, delays, voice rules, and so on) were stored in Redis. They now live in Postgres,
+and **9.2.x is the last release that can move them**. 10.0 and later never read settings from Redis, so jumping
+straight from v8 to 10 resets every server to the default settings. Go through 9.2.0 first:
+
+1. Set `AUTOMUTEUS_TAG=9.2.0` in `.env`, then run `docker compose pull` and `docker compose up -d`. The bot now moves
+   each server's settings into Postgres the first time that server uses it.
+2. Move the servers that have not used the bot yet with the one-off sweep included in the 9.2.0 image. The dry run
+   only checks the records and writes nothing:
+
+   ```bash
+   docker compose run --rm --no-deps --entrypoint ./migrate-guild-settings automuteus --dry-run
+   docker compose run --rm --no-deps --entrypoint ./migrate-guild-settings automuteus
+   ```
+
+   Both print a JSON report. The sweep is safe to run while the bot is up, and it never overwrites settings already
+   in Postgres. Records it cannot read are listed under `failures` and left in Redis; they are the only settings
+   that will not carry over.
+3. Run the sweep again until it reports `"examined": 0`, then upgrade to 10.0 or later as usual.
+
 ## Upgrading Postgres
 
 The `docker-compose.yml` file now runs `postgres:18-alpine`; earlier versions of this file ran `postgres:12-alpine`.
