@@ -2,6 +2,11 @@
 
 If you would prefer to self-host the bot, the steps for doing so are provided below. Self-hosting requires robust knowledge and troubleshooting capability for Docker/Docker-compose and/or any other networking and routing config specific to your hosting solution.
 
+## Architecture
+
+[ARCHITECTURE.md](ARCHITECTURE.md) has a diagram of the containers in this stack, what each one talks to, and how a
+game flows from `/new` through the capture client to the bot.
+
 ## Pre-Installation Steps, Important!
 
 - Create an Application and Bot account (requires Admin privileges on the Server in question). [Instructions here](BOT_README.md)
@@ -24,6 +29,12 @@ For the first upgrade, run `docker compose stop automuteus`, then
 before the new API container binds it. Later API updates can use
 `docker compose up -d api` independently of the bot.
 
+The stack includes the web dashboard from [automuteus/web](https://github.com/automuteus/web), which is where guild
+settings are managed (with Discord sign-in). It needs `NEXTAUTH_SECRET`, `DISCORD_CLIENT_ID`, and
+`DISCORD_CLIENT_SECRET` in your `.env` (see `sample.env`) and the OAuth2 redirect registered in your Discord
+application; the stack will not start without them. It is published on `WEB_PORT` (default 3000) and talks to the API
+over the compose network, so it needs no other configuration.
+
 ### Steps:
 
 - Install [Docker](https://docs.docker.com/engine/install/) and [Docker Compose](https://docs.docker.com/compose/install/) on the machine you will be using to host AutoMuteUs
@@ -32,29 +43,15 @@ before the new API container binds it. Later API updates can use
 - Run `docker compose pull`. This will download the latest built Docker images from Dockerhub that are required to run AutoMuteUs.
 - Run `docker compose up -d` to start all the containers required for AutoMuteUs to function. The containers will now be running in the background, but you can view the logs for the containers using `docker compose logs`, or `docker compose logs -f` to follow along as new log entries are generated.
 
-## unRAID
-
-unRAID hosting steps are are not yet updated for v3.0+ of AutoMuteUs, and as such is not supported at this time.
-
-## Heroku
-
-Heroku hosting steps are are not yet updated for v3.0+ of AutoMuteUs, and as such is not supported at this time.
-
-## FreeBSD
-
-AutoMuteUs exists in the FreeBSD Ports tree as [`games/automuteus`](https://www.freshports.org/games/automuteus/). Instructions are included in the Port.
-
-## Old version
-If, for whatever reason, you _really_ want to self host, but also don't want to figure out Docker or use Windows and hate Docker because of it (I don't blame you) you can self host [2.4.3](https://github.com/denverquane/automuteus/releases/tag/2.4.3) instead. **If you are using this method, continue using the newest capture!** But note that 2.4.3 does not support 15 players' lobby and new player colors!
-
 ## Development Instructions
 
-The easiest way to test changes is to run the same `docker compose` stack, but build the `automuteus`, `galactus`, and `api`
-images from source instead of pulling them. Docker Compose merges a `docker-compose.override.yml` file into
+The easiest way to test changes is to run the same `docker compose` stack, but build the `automuteus`, `galactus`, `api`,
+and `web` images from source instead of pulling them. Docker Compose merges a `docker-compose.override.yml` file into
 `docker-compose.yml` automatically if one exists, and a ready-made override is provided:
 
 1. Clone [automuteus/automuteus](https://github.com/automuteus/automuteus) next to this `deploy` repository, so the
-   two directories are siblings. The Bot, Galactus, and the API are built from that one repository.
+   two directories are siblings. The Bot, Galactus, and the API are built from that one repository. Also clone
+   [automuteus/web](https://github.com/automuteus/web) as a sibling for the dashboard.
 2. Copy the sample override into place (it is gitignored, so edit it freely):
 
    ```bash
@@ -147,6 +144,11 @@ major upgrades can be done in place with `pg_upgrade --link` on the same volume,
 - `DISCORD_BOT_TOKEN`: The Bot Token used by the bot to authenticate with Discord.
 - `POSTGRES_USER`: Username for authentication with Postgres.
 - `POSTGRES_PASS`: Password for authentication with Postgres.
+- `NEXTAUTH_SECRET`: Random secret that encrypts the web dashboard's session cookies, e.g. `openssl rand -base64 32`.
+- `DISCORD_CLIENT_ID` / `DISCORD_CLIENT_SECRET`: OAuth2 credentials of your Discord application, used by the dashboard
+  for sign-in and to build bot invite links. The bot's own application can be used. Register
+  `<WEB_URL>/api/auth/callback/discord` (by default `http://localhost:3000/api/auth/callback/discord`) as a
+  redirect in the application's OAuth2 settings.
 - `GALACTUS_HOST`: The **externally-accessible URL** for Galactus. 
   For example, if you only intend on running the capture from the same machine that runs AutoMuteUs, use `http://localhost:8123`.
   This is the URL the bot sends as a response to `/new` in order to link capture clients to Galactus, so it needs to be accessible to any users wishing to run capture clients.
@@ -171,6 +173,14 @@ major upgrades can be done in place with `pg_upgrade --link` on the same volume,
 - `API_SERVER_URL`: Public API URL (including scheme and any nonstandard port), used for capture links and Swagger Docs. Defaults to `http://localhost:${API_PORT:-8080}` in Compose, so changing `API_PORT` also updates capture links. Set this explicitly when capture runs on another machine or the API is behind a reverse proxy.
 - `API_ADMIN_PASS`: Admin Password for the API. Defaults to `automuteus`. Raising or clearing platform notices via `POST`/`DELETE /admin/notice` (a banner on every game's status message, or ending every game for maintenance) requires a non-default value.
 - `DRAIN_SECONDS`: How long Galactus keeps running after a stop signal, refusing new capture clients, before telling the bot to end the games whose captures were connected to it and exiting. Defaults to `5`. Compose gives the container 30 seconds to complete this.
+
+### Web dashboard
+- `WEB_URL`: The dashboard's public URL, which the bot's `/settings` command links to and the dashboard uses for
+  sign-in redirects. Defaults to `http://localhost:${WEB_PORT:-3000}`, which only works for people on the host
+  machine. Set it when the dashboard is exposed or behind a reverse proxy, and update the OAuth2 redirect in the
+  Discord application to match.
+- `WEB_PORT`: Public host port for the dashboard. Defaults to `3000`.
+- `WEB_TAG`: Dashboard image version. Defaults to `latest`; the dashboard is released separately from the bot.
 
 ### HIGHLY advanced. Probably don't ever touch these!
 
