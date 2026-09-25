@@ -192,7 +192,10 @@ major upgrades can be done in place with `pg_upgrade --link` on the same volume,
 - `API_PORT`: Public host port for the separate API container. Defaults to `8080`; set `80` to keep the previous default. `SERVICE_PORT` selects the API's internal listening port (default `5000`).
 - `API_TAG`: Optional API image version override; defaults to `AUTOMUTEUS_TAG`.
 - `API_SERVER_URL`: Public API URL (including scheme and any nonstandard port), used for capture links and Swagger Docs. Defaults to `http://localhost:${API_PORT:-8080}` in Compose, so changing `API_PORT` also updates capture links. Set this explicitly when capture runs on another machine or the API is behind a reverse proxy.
-- `API_ADMIN_PASS`: Admin Password for the API. Defaults to `automuteus`. Raising or clearing platform notices via `POST`/`DELETE /admin/notice` (a banner on every game's status message, or ending every game for maintenance) requires a non-default value.
+- `API_ADMIN_PASS`: Password for the API's `admin` account. Defaults to `automuteus`, which the API treats as unset:
+  it never accepts the admin credential while the password is blank or default. A non-default value is required for
+  raising or clearing platform notices via `POST`/`DELETE /admin/notice` (a banner on every game's status message,
+  or ending every game for maintenance), and for the dashboard's admin stats view (see `ADMIN_USER_IDS`).
 - `DRAIN_SECONDS`: How long Galactus keeps running after a stop signal, refusing new capture clients, before telling the bot to end the games whose captures were connected to it and exiting. Defaults to `5`. Compose gives the container 30 seconds to complete this.
 
 ### Web dashboard
@@ -202,6 +205,13 @@ major upgrades can be done in place with `pg_upgrade --link` on the same volume,
   Discord application to match.
 - `WEB_PORT`: Public host port for the dashboard. Defaults to `3000`.
 - `WEB_TAG`: Dashboard image version. Defaults to `latest`; the dashboard is released separately from the bot.
+- `ADMIN_USER_IDS`: Comma-separated Discord user IDs of operators who may open any server's stats pages on the
+  dashboard by ID, including servers they are not a member of. Only takes effect when `API_ADMIN_PASS` is also set
+  to a non-default value; leave unset to disable. For a listed user, the dashboard forwards the read-only stats,
+  match, player, and bot presence routes with the API's admin credential instead of the user's Discord session, and
+  shows the leaderboards regardless of the server's premium. Settings, stats resets, and premium always use the
+  user's own Discord permissions, so this cannot change a server. The pages show an admin-view notice, and the API
+  logs each admin read with the user and server.
 
 ### HIGHLY advanced. Probably don't ever touch these!
 
