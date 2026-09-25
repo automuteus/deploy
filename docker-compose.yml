@@ -17,6 +17,8 @@ services:
       - BASE_MAP_URL=${BASE_MAP_URL:-}
       - SLASH_COMMAND_GUILD_IDS=${SLASH_COMMAND_GUILD_IDS:-}
       - API_SERVER_URL=${API_SERVER_URL:-http://localhost:${API_PORT:-8080}}
+      # Where /settings sends people: the web service below
+      - WEB_URL=${WEB_URL:-http://localhost:${WEB_PORT:-3000}}
       - SHARDS=${SHARDS:-}
       - NUM_SHARDS=${NUM_SHARDS:-}
       - LOG_FORMAT=${LOG_FORMAT:-}
@@ -57,14 +59,11 @@ services:
   api:
     # API follows the bot's release tag unless explicitly overridden.
     image: automuteus/api:${API_TAG:-${AUTOMUTEUS_TAG:?err}}
-    # To build from this repository's sibling source checkout:
-    # build:
-    #   context: ../automuteus
-    #   dockerfile: Dockerfile.api
     ports:
       - ${API_PORT:-8080}:${SERVICE_PORT:-5000}
     restart: always
     environment:
+      - DISCORD_BOT_TOKEN=${DISCORD_BOT_TOKEN:?err}
       - API_PORT=${SERVICE_PORT:-5000}
       - API_SERVER_URL=${API_SERVER_URL:-http://localhost:${API_PORT:-8080}}
       - API_ADMIN_PASS=${API_ADMIN_PASS:-}
@@ -80,6 +79,34 @@ services:
       - postgres
     healthcheck:
       test: ["CMD-SHELL", "wget -q -O /dev/null http://127.0.0.1:$${API_PORT}/ready"]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+      start_period: 30s
+
+  web:
+    # The dashboard (https://github.com/automuteus/web) is where guild settings are managed.
+    # It is versioned separately from the bot, so WEB_TAG does not follow AUTOMUTEUS_TAG.
+    image: automuteus/react-web:${WEB_TAG:-latest}
+    ports:
+      - ${WEB_PORT:-3000}:3000
+    restart: always
+    environment:
+      # These are required and will fail if not present; see sample.env
+      - NEXTAUTH_SECRET=${NEXTAUTH_SECRET:?err}
+      - DISCORD_CLIENT_ID=${DISCORD_CLIENT_ID:?err}
+      - DISCORD_CLIENT_SECRET=${DISCORD_CLIENT_SECRET:?err}
+      # Optional; the same WEB_URL the bot uses for /settings links
+      - NEXTAUTH_URL=${WEB_URL:-http://localhost:${WEB_PORT:-3000}}
+      # The dashboard reaches the API over the compose network; the published API_PORT is not involved.
+      - AUTOMUTEUS_API_URL=http://api:${SERVICE_PORT:-5000}
+      # Optional admin view of any server's stats: both must be set, and API_ADMIN_PASS must be non-default
+      - ADMIN_USER_IDS=${ADMIN_USER_IDS:-}
+      - API_ADMIN_PASS=${API_ADMIN_PASS:-}
+    depends_on:
+      - api
+    healthcheck:
+      test: ["CMD-SHELL", "wget -q -O /dev/null http://127.0.0.1:3000/api/live"]
       interval: 10s
       timeout: 3s
       retries: 3

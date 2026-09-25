@@ -25,3 +25,9 @@ services:
     build:
       context: ../automuteus
       dockerfile: Dockerfile.api
+
+  # The dashboard lives in its own repository: https://github.com/automuteus/web
+  web:
+    image: automuteus/react-web:local
+    build:
+      context: ../web
